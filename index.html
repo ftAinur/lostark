@@ -140,18 +140,27 @@
             width: 150px;
             font-weight: bold;
             color: #b8b8d0;
-            margin-right: 10px;
+            margin-right: 5px;
         }
         
         input {
             padding: 10px 12px;
-            width: 120px;
+            width: 160px; /* Увеличиваем ширину с 120px до 160px */
             border: 1px solid #4a4a6a;
             border-radius: 4px;
             background-color: #2a2a3a;
             color: #e6e6e6;
             font-size: 14px;
             transition: all 0.3s ease;
+            min-width: 160px; /* Добавляем минимальную ширину */
+        }
+
+        /* Для мобильных устройств оставляем 100% ширину */
+        @media (max-width: 768px) {
+            input {
+                width: 100%;
+                min-width: 0;
+            }
         }
         
         input:focus {
