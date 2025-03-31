@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор крафта орехов - Lost Ark</title>
+    <style>
+        /* Базовые стили */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #1a1a2e;
+            color: #e6e6e6;
+            background-image: url('https://images.contentstack.io/v3/assets/blt370612131b6e0756/blt5f6b7e1aa6949345/5f4fcd1d9f70570f01bb6d5d/Header.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+        }
+        
+        /* Заголовки */
+        h1, h2, h3 {
+            color: #f0a400;
+            text-shadow: 1px 1px 2px #000;
+            margin-bottom: 15px;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 10px;
+        }
+        
+        h3 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: #b8b8d0;
+        }
+        
+        /* Контейнеры */
+        .container {
+            background-color: rgba(26, 26, 46, 0.9);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+        
+        .nut-price-section {
+            background-color: rgba(40, 60, 80, 0.7);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border: 1px solid #f0a400;
+        }
+        
+        .input-section {
+            background-color: rgba(40, 40, 60, 0.7);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border: 1px solid #4a4a6a;
+        }
+        
+        .results {
+            margin-top: 30px;
+            background-color: rgba(40, 40, 60, 0.7);
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        /* Кнопки профессий */
+        .profession-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .profession-btn {
+            padding: 10px 15px;
+            background-color: #2a2a3a;
+            border: 1px solid #4a4a6a;
+            color: #b8b8d0;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .profession-btn:hover {
+            background-color: #3a3a4a;
+            transform: translateY(-2px);
+        }
+        
+        .profession-btn.active {
+            background-color: #f0a400;
+            color: #1a1a2e;
+            font-weight: bold;
+            border-color: #f0a400;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Блоки ввода для профессий */
+        .profession-inputs {
+            display: none;
+            background-color: rgba(30, 30, 50, 0.7);
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            border-left: 4px solid #f0a400;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .profession-inputs.active {
+            display: block;
+        }
+        
+        /* Группы ввода */
+        .input-group {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        label {
+            display: inline-block;
+            width: 150px;
+            font-weight: bold;
+            color: #b8b8d0;
+            margin-right: 10px;
+        }
+        
+        input {
+            padding: 10px 12px;
+            width: 120px;
+            border: 1px solid #4a4a6a;
+            border-radius: 4px;
+            background-color: #2a2a3a;
+            color: #e6e6e6;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #f0a400;
+            box-shadow: 0 0 5px rgba(240, 164, 0, 0.5);
+        }
+        
+        .input-hint {
+            color: #b8b8d0;
+            font-size: 0.9em;
+            margin-left: 10px;
+            opacity: 0.8;
+        }
+        
+        /* Кнопка рассчета */
+        .calculate-btn {
+            background-color: #f0a400;
+            color: #1a1a2e;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            display: block;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .calculate-btn:hover {
+            background-color: #ffc107;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Таблица результатов */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: rgba(40, 40, 60, 0.8);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        th, td {
+            border: 1px solid #4a4a6a;
+            padding: 12px;
+            text-align: center;
+        }
+        
+        th {
+            background-color: rgba(60, 60, 80, 0.9);
+            color: #f0a400;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+        
+        /* Стили для лучших вариантов */
+        .best-option {
+            background-color: rgba(50, 80, 50, 0.7);
+            position: relative;
+        }
+        
+        .best-option::after {
+            content: "★";
+            color: #f0a400;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .craft-cost {
+            font-weight: bold;
+            color: #f0a400;
+        }
+        
+        .final-best {
+            background-color: rgba(80, 110, 80, 0.9);
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #fff;
+            text-align: center;
+        }
+        
+        /* Блок с необходимыми ресурсами */
+        .resources-needed {
+            background-color: rgba(50, 50, 70, 0.8);
+            padding: 20px;
+            border-radius: 6px;
+            margin-top: 25px;
+            border-left: 4px solid #f0a400;
+        }
+        
+        .resource-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #4a4a6a;
+            align-items: center;
+        }
+        
+        .resource-name {
+            font-weight: bold;
+            color: #b8b8d0;
+        }
+        
+        .resource-value {
+            color: #f0a400;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        /* Анимации */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .input-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            label {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+            
+            input {
+                width: 100%;
+            }
+            
+            .input-hint {
+                margin-left: 0;
+                margin-top: 5px;
+            }
+            
+            .profession-selector {
+                flex-direction: column;
+            }
+            
+            .profession-btn {
+                width: 100%;
+                text-align: center;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+        
+        /* Сообщения об ошибках */
+        .error-message {
+            color: #ff6b6b;
+            text-align: center;
+            padding: 20px;
+            background-color: rgba(80, 30, 30, 0.7);
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ff6b6b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Калькулятор крафта орехов - Lost Ark</h1>
+        
+        <div class="nut-price-section">
+            <h2>Основные параметры</h2>
+            <div class="input-group">
+                <label for="nut-price">Цена ореха:</label>
+                <input type="number" id="nut-price" placeholder="Введите цену">
+            </div>
+            <div class="input-group">
+                <label for="craft-count">Количество орехов за крафт:</label>
+                <input type="number" id="craft-count" min="10" max="400" value="10">
+                <span class="input-hint">(от 10 до 400)</span>
+            </div>
+        </div>
+        
+        <div class="input-section">
+            <h2>Цены на ресурсы (за 100 шт.)</h2>
+            
+            <div class="profession-selector">
+                <button class="profession-btn active" onclick="showProfession('wood')">Лесозаготовка</button>
+                <button class="profession-btn" onclick="showProfession('mining')">Горное дело</button>
+                <button class="profession-btn" onclick="showProfession('plant')">Травничество</button>
+                <button class="profession-btn" onclick="showProfession('hunt')">Охота</button>
+                <button class="profession-btn" onclick="showProfession('fish')">Рыбалка</button>
+                <button class="profession-btn" onclick="showProfession('arch')">Археология</button>
+            </div>
+            
+            <div id="wood-inputs" class="profession-inputs active">
+                <h3>Лесозаготовка</h3>
+                <div class="input-group">
+                    <label for="wood-white">Белый ресурс:</label>
+                    <input type="number" id="wood-white" placeholder="Введите цену">
+                </div>
+                <div class="input-group">
+                    <label for="wood-green">Зелёный ресурс:</label>
+                    <input type="number" id="wood-green" placeholder="Введите цену">
+                </div>
+                <div class="input-group">
+                    <label for="wood-blue">Синий ресурс:</label>
+                    <input type="number" id="wood-blue" placeholder="Введите цену">
+                </div>
+            </div>
+            
+            <div id="mining-inputs" class="profession-inputs">
+                <h3>Горное дело</h3>
+                <div class="input-group">
+                    <label for="mining-white">Белый ресурс:</label>
+                    <input type="number" id="mining-white" placeholder="Введите цену">
+                </div>
+                <div class="input-group">
+                    <label for="mining-green">Зелёный ресурс:</label>
+                    <input type="number" id="mining-green" placeholder="Введите цену">
+                </div>
+                <div class="input-group">
+                    <label for="mining-blue">Синий ресурс:</label>
+                    <input type="number" id="mining-blue" placeholder="Введите цену">
+                </div>
+            </div>
+            
+            <div id="plant-inputs" class="profession-inputs">
+                <h3>Травничество</h3>
+                <div class="input-group">
+                    <label for="plant-white">Белый ресурс:</label>
+                    <input type="number" id="plant-white" placeholder="Введите цену">
+                </div>
+                <div class="input-group">
+                    <label for="plant-green">Зелёный ресурс:</label>
+                    <input type="number" id="plant-green" placeholder="Введите цену">
+                </div>
+                <div class="input-group">
+                    <label for="plant-blue">Синий ресурс:</label>
+                    <input type="number" id="plant-blue" placeholder="Введите цену">
+                </div>
+            </div>
+            
+            <div id="hunt-inputs" class="profession-inputs">
+                <h3>Охота</h3>
+                <div class="input-group">
+                    <label for="hunt-white">Белый ресурс:</label>
+                    <input type="number" id="hunt-white" placeholder="Введите цену">
+                </div>
+                <div class="input-group">
+                    <label for="hunt-green">Зелёный ресурс:</label>
+                    <input type="number" id="hunt-green" placeholder="Введите цену">
+                </div>
+                <div class="input-group">
+                    <label for="hunt-blue">Синий ресурс:</label>
+                    <input type="number" id="hunt-blue" placeholder="Введите цену">
+                </div>
+            </div>
+            
+            <div id="fish-inputs" class="profession-inputs">
+                <h3>Рыбалка</h3>
+                <div class="input-group">
+                    <label for="fish-white">Белый ресурс:</label>
+                    <input type="number" id="fish-white" placeholder="Введите цену">
+                </div>
+                <div class="input-group">
+                    <label for="fish-green">Зелёный ресурс:</label>
+                    <input type="number" id="fish-green" placeholder="Введите цену">
+                </div>
+                <div class="input-group">
+                    <label for="fish-blue">Синий ресурс:</label>
+                    <input type="number" id="fish-blue" placeholder="Введите цену">
+                </div>
+            </div>
+            
+            <div id="arch-inputs" class="profession-inputs">
+                <h3>Археология</h3>
+                <div class="input-group">
+                    <label for="arch-white">Белый ресурс:</label>
+                    <input type="number" id="arch-white" placeholder="Введите цену">
+                </div>
+                <div class="input-group">
+                    <label for="arch-green">Зелёный ресурс:</label>
+                    <input type="number" id="arch-green" placeholder="Введите цену">
+                </div>
+                <div class="input-group">
+                    <label for="arch-blue">Синий ресурс:</label>
+                    <input type="number" id="arch-blue" placeholder="Введите цену">
+                </div>
+            </div>
+            
+            <button class="calculate-btn" onclick="calculate()">Рассчитать</button>
+        </div>
+        
+        <div class="results">
+            <h2>Результаты расчета</h2>
+            <div id="results-table"></div>
+        </div>
+    </div>
+
+    <script>
+        // Функция для переключения между профессиями
+        function showProfession(profession) {
+            // Убираем активный класс у всех кнопок
+            const buttons = document.querySelectorAll('.profession-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Добавляем активный класс текущей кнопке
+            event.target.classList.add('active');
+            
+            // Скрываем все блоки с ресурсами
+            const inputs = document.querySelectorAll('.profession-inputs');
+            inputs.forEach(input => {
+                input.classList.remove('active');
+            });
+            
+            // Показываем нужный блок
+            document.getElementById(`${profession}-inputs`).classList.add('active');
+        }
+
+        function calculate() {
+            // Получаем значения из полей ввода
+            const nutPrice = parseFloat(document.getElementById('nut-price').value);
+            const craftCountInput = document.getElementById('craft-count');
+            let craftCount = parseInt(craftCountInput.value);
+            
+            // Проверяем ограничения на количество орехов
+            if (isNaN(craftCount)) {
+                craftCount = 10;
+                craftCountInput.value = 10;
+            } else if (craftCount < 10) {
+                craftCount = 10;
+                craftCountInput.value = 10;
+            } else if (craftCount > 400) {
+                craftCount = 400;
+                craftCountInput.value = 400;
+            }
+            
+            // Проверяем, что указана цена ореха
+            if (isNaN(nutPrice) || nutPrice <= 0) {
+                document.getElementById('results-table').innerHTML = `
+                    <div class="error-message">
+                        Пожалуйста, укажите корректную цену ореха
+                    </div>
+                `;
+                return;
+            }
+            
+            // Все профессии и их поля ввода
+            const professions = [
+                { id: "wood", name: "Лесозаготовка" },
+                { id: "mining", name: "Горное дело" },
+                { id: "plant", name: "Травничество" },
+                { id: "hunt", name: "Охота" },
+                { id: "fish", name: "Рыбалка" },
+                { id: "arch", name: "Археология" }
+            ];
+            
+            // Собираем цены только для тех профессий, где указаны все три вида ресурсов
+            const professionPrices = {};
+            
+            professions.forEach(prof => {
+                const white = parseFloat(document.getElementById(`${prof.id}-white`).value);
+                const green = parseFloat(document.getElementById(`${prof.id}-green`).value);
+                const blue = parseFloat(document.getElementById(`${prof.id}-blue`).value);
+                
+                // Проверяем, что все три цены указаны (не NaN и больше 0)
+                if (!isNaN(white) && !isNaN(green) && !isNaN(blue) && 
+                    white > 0 && green > 0 && blue > 0) {
+                    professionPrices[prof.name] = {
+                        white: white,
+                        green: green,
+                        blue: blue
+                    };
+                }
+            });
+            
+            // Если ни одна профессия не выбрана, показываем сообщение
+            if (Object.keys(professionPrices).length === 0) {
+                document.getElementById('results-table').innerHTML = `
+                    <div class="error-message">
+                        Пожалуйста, укажите цены хотя бы для одной профессии
+                    </div>
+                `;
+                return;
+            }
+            
+            // Количество ресурсов для крафта (на 10 орехов)
+            const resourcesPer10 = {
+                white: 86,
+                green: 45,
+                blue: 33,
+                gold: 400
+            };
+            
+            // Коэффициенты обмена ресурсов
+            const exchangeRates = {
+                whiteToGreen: 2.5,
+                whiteToBlue: 12.5,
+                greenToBlue: 6.25
+            };
+            
+            // Функция для расчета стоимости крафта разными способами
+            function calculateOptions(prices, professionName) {
+                return [
+                    {
+                        name: "Только белые",
+                        description: "Все ресурсы делаются из белых",
+                        calculate: function() {
+                            const totalWhite = resourcesPer10.white + 
+                                            resourcesPer10.green * exchangeRates.whiteToGreen + 
+                                            resourcesPer10.blue * exchangeRates.whiteToBlue;
+                            
+                            const cost = (totalWhite * prices.white / 100) + resourcesPer10.gold;
+                            return {
+                                cost: cost * (craftCount / 10),
+                                resources: {
+                                    white: Math.ceil(totalWhite * (craftCount / 10)),
+                                    green: 0,
+                                    blue: 0,
+                                    gold: Math.ceil(resourcesPer10.gold * (craftCount / 10))
+                                }
+                            };
+                        }
+                    },
+                    {
+                        name: "Белые + зелёные",
+                        description: "Только белые обменяны на синие",
+                        calculate: function() {
+                            const totalWhite = resourcesPer10.white + 
+                                            resourcesPer10.blue * exchangeRates.whiteToBlue;
+                            const totalGreen = resourcesPer10.green;
+                            
+                            const cost = (totalWhite * prices.white / 100) + 
+                                         (totalGreen * prices.green / 100) + 
+                                         resourcesPer10.gold;
+                            return {
+                                cost: cost * (craftCount / 10),
+                                resources: {
+                                    white: Math.ceil(totalWhite * (craftCount / 10)),
+                                    green: Math.ceil(totalGreen * (craftCount / 10)),
+                                    blue: 0,
+                                    gold: Math.ceil(resourcesPer10.gold * (craftCount / 10))
+                                }
+                            };
+                        }
+                    },
+                    {
+                        name: "Все ресурсы",
+                        description: "Без обмена ресурсов",
+                        calculate: function() {
+                            const cost = (resourcesPer10.white * prices.white / 100) + 
+                                         (resourcesPer10.green * prices.green / 100) + 
+                                         (resourcesPer10.blue * prices.blue / 100) + 
+                                         resourcesPer10.gold;
+                            return {
+                                cost: cost * (craftCount / 10),
+                                resources: {
+                                    white: Math.ceil(resourcesPer10.white * (craftCount / 10)),
+                                    green: Math.ceil(resourcesPer10.green * (craftCount / 10)),
+                                    blue: Math.ceil(resourcesPer10.blue * (craftCount / 10)),
+                                    gold: Math.ceil(resourcesPer10.gold * (craftCount / 10))
+                                }
+                            };
+                        }
+                    }
+                ];
+            }
+            
+            // Рассчитываем все варианты для каждой профессии
+            const allResults = [];
+            let minCost = Infinity;
+            let bestOption = null;
+            let bestResources = null;
+            
+            for (const [profession, prices] of Object.entries(professionPrices)) {
+                const options = calculateOptions(prices, profession);
+                
+                // Находим лучший вариант для этой профессии
+                let minCostProfession = Infinity;
+                let bestOptionProfession = null;
+                let bestResourcesProfession = null;
+                
+                const professionResults = options.map(option => {
+                    const result = option.calculate();
+                    const profit = (nutPrice * craftCount * 0.95) - result.cost;
+                    
+                    if (result.cost < minCost) {
+                        minCost = result.cost;
+                        bestOption = {
+                            profession: profession,
+                            option: option.name,
+                            cost: result.cost,
+                            profit: profit,
+                            description: option.description
+                        };
+                        bestResources = result.resources;
+                    }
+                    
+                    if (result.cost < minCostProfession) {
+                        minCostProfession = result.cost;
+                        bestOptionProfession = {
+                            name: option.name,
+                            description: option.description,
+                            cost: result.cost.toFixed(2),
+                            profit: profit.toFixed(2),
+                            isBest: true
+                        };
+                        bestResourcesProfession = result.resources;
+                    }
+                    
+                    return {
+                        profession: profession,
+                        name: option.name,
+                        description: option.description,
+                        cost: result.cost.toFixed(2),
+                        profit: profit.toFixed(2),
+                        isBest: false,
+                        resources: result.resources
+                    };
+                });
+                
+                // Помечаем лучший вариант для профессии
+                professionResults.forEach(result => {
+                    if (result.cost === bestOptionProfession.cost) {
+                        result.isBest = true;
+                    }
+                });
+                
+                allResults.push(...professionResults);
+            }
+            
+            // Формируем HTML таблицу с результатами
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Способ</th>
+                            <th>Описание</th>
+                            <th>Стоимость (${craftCount} орехов)</th>
+                            <th>Выгода продажи (с учетом 5% комиссии)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            // Добавляем результаты по профессиям
+            function addProfessionResults(profession) {
+                html += `
+                    <tr class="profession-header">
+                        <td colspan="4">${profession}</td>
+                    </tr>
+                `;
+                
+                allResults.filter(r => r.profession === profession).forEach(result => {
+                    html += `
+                        <tr ${result.isBest ? 'class="best-option"' : ''}>
+                            <td>${result.name}</td>
+                            <td>${result.description}</td>
+                            <td class="craft-cost">${result.cost} золота</td>
+                            <td>${result.profit} золота</td>
+                        </tr>
+                    `;
+                });
+            }
+            
+            // Добавляем профессии в порядке их наличия в professionPrices
+            Object.keys(professionPrices).forEach(profession => {
+                addProfessionResults(profession);
+            });
+            
+            // Добавляем итоговый лучший вариант и необходимые ресурсы
+            html += `
+                    <tr class="final-best">
+                        <td colspan="4">
+                            <strong>Самый выгодный вариант:</strong> ${bestOption.profession} - ${bestOption.option}<br>
+                            <strong>Способ:</strong> ${bestOption.description}
+                        </td>
+                    </tr>
+                </tbody>
+                </table>
+                
+                <div class="resources-needed">
+                    <h3>Необходимые ресурсы для ${craftCount} орехов (${bestOption.profession} - ${bestOption.option})</h3>
+                    <div class="resource-item">
+                        <span class="resource-name">Белые ресурсы:</span>
+                        <span class="resource-value">${bestResources.white} шт.</span>
+                    </div>
+                    <div class="resource-item">
+                        <span class="resource-name">Зелёные ресурсы:</span>
+                        <span class="resource-value">${bestResources.green} шт.</span>
+                    </div>
+                    <div class="resource-item">
+                        <span class="resource-name">Синие ресурсы:</span>
+                        <span class="resource-value">${bestResources.blue} шт.</span>
+                    </div>
+                    <div class="resource-item">
+                        <span class="resource-name">Золото:</span>
+                        <span class="resource-value">${bestResources.gold}</span>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <strong>Общая стоимость:</strong> ${bestOption.cost.toFixed(2)} золота<br>
+                        <strong>Выгода после продажи (5% комиссия):</strong> ${bestOption.profit.toFixed(2)} золота
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('results-table').innerHTML = html;
+        }
+    </script>
+</body>
+</html>
